@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+
 
 import com.github.javafaker.Faker;
 
@@ -20,27 +20,53 @@ public class SpringJpaApplication {
 	}
 	
 	@Bean
-	CommandLineRunner commandLineRunner(StudentRepository studentRepository) {
+	CommandLineRunner commandLineRunner(StudentRepository studentRepository,
+			StudentIdCardRepository studentCardRepository
+			) {
 		return args ->{
 			Faker faker = new Faker();
-			for(int i=0;i<21;i++) {
-				String firstname = faker.name().firstName();
-				String lastName = faker.name().lastName();
-				String email = String.format("%s.%s@g.com", firstname, lastName);
-				Student student = new Student(
-						firstname,
-						lastName,
-						email,
-						faker.number().numberBetween(17, 60)
-						);
-				studentRepository.save(student);
-			}
-			PageRequest pageRequest = PageRequest.of(0, 5);
-			Page<Student> page = studentRepository.findAll(pageRequest);
-			page.get().forEach(s ->System.out.println(s));
+			String firstname = faker.name().firstName();
+			String lastName = faker.name().lastName();
+			String email = String.format("%s.%s@g.com", firstname, lastName);
+			Student student = new Student(
+					firstname,
+					lastName,
+					email,
+					faker.number().numberBetween(17, 60)
+					);
+			StudentIdCard card = new StudentIdCard("123456789", student);
 			
-	
-	};
+			//studentCardRepository.save(card);
+			
+			studentRepository.findById(1L).ifPresent(System.out::println);
+			
+			studentCardRepository.findById(1L).ifPresent(System.out::println);
+			
+			//studentRepository.deleteById(173L);
+		
+		};
 
-	}
+
+
+	} 
+	private void fakeStudents(StudentRepository studentRepository) {
+		Faker faker = new Faker();
+		for(int i=0;i<21;i++) {
+			String firstname = faker.name().firstName();
+			String lastName = faker.name().lastName();
+			String email = String.format("%s.%s@g.com", firstname, lastName);
+			Student student = new Student(
+					firstname,
+					lastName,
+					email,
+					faker.number().numberBetween(17, 60)
+					);
+			studentRepository.save(student);
+		}
+		PageRequest pageRequest = PageRequest.of(0, 5);
+		Page<Student> page = studentRepository.findAll(pageRequest);
+		page.get().forEach(s ->System.out.println(s));
+		
+
+};
 }
