@@ -1,5 +1,7 @@
 package com.example.springjpa;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;
@@ -34,13 +36,24 @@ public class SpringJpaApplication {
 					email,
 					faker.number().numberBetween(17, 60)
 					);
-			StudentIdCard card = new StudentIdCard("123456789", student);
+			StudentIdCard card = new StudentIdCard("12345678", student);
+			
+			student.addBook(new Book("Lord of the rings", LocalDate.now().minusDays(2)));
+			student.addBook(new Book("Lord of the rings 2", LocalDate.now().minusDays(2)));
+			student.addBook(new Book("Lord of the rings 3", LocalDate.now().minusDays(2)));
+			
+			student.setStudentIdCard(card);
+			
+			studentRepository.save(student);
 			
 			//studentCardRepository.save(card);
 			
-			studentRepository.findById(1L).ifPresent(System.out::println);
+			studentRepository.findById(1L).ifPresent(s -> {
+				List<Book> books = s.getBooks();
+				books.forEach(b -> System.out.println(s.getFirstName() + b.getBookName()));
+			});
 			
-			studentCardRepository.findById(1L).ifPresent(System.out::println);
+			//studentCardRepository.findById(1L).ifPresent(System.out::println);
 			
 			//studentRepository.deleteById(173L);
 		
