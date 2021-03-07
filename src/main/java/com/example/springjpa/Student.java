@@ -7,15 +7,22 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 @Entity(name = "Student")
 @Table(name = "student",
@@ -83,11 +90,56 @@ public class Student {
 	@OneToMany(
 			mappedBy = "student",
 			orphanRemoval = true,
-			cascade = CascadeType.ALL,
-			fetch = FetchType.EAGER
+			cascade = CascadeType.ALL
 			)
+	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Book> books = new ArrayList<Book>();
 	
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@OneToMany(
+			cascade = CascadeType.ALL,
+			mappedBy = "student"
+			)
+	private List<Enrolment> enrolments = new ArrayList<>();
+//	@ManyToMany(
+//			cascade = CascadeType.ALL
+//			)
+//	@JoinTable(
+//			name = "enrolment",
+//			joinColumns = @JoinColumn(
+//						name = "student_id",
+//						foreignKey = @ForeignKey(name = "enrolement_student_id_fk")
+//								), 
+//								inverseJoinColumns = @JoinColumn(
+//								name = "course_id",
+//								foreignKey = @ForeignKey(
+//											name = "enrolement_course_id_fk"
+//										)
+//					)
+//			)
+//	private List<Course> courses = new ArrayList<Course>();
+	
+	public void addEnrolment (Enrolment enrolment) {
+		if(!enrolments.contains(enrolment))
+		enrolments.add(enrolment);
+	}
+	
+	public void reoveEnrolment(Enrolment enrolment) {
+		enrolments.remove(enrolment);
+	}
+	
+	public List<Enrolment> getEnrolments() {
+		return enrolments;
+	}
+
+	public void setEnrolments(List<Enrolment> enrolments) {
+		this.enrolments = enrolments;
+	}
+
+	public void setBooks(List<Book> books) {
+		this.books = books;
+	}
+
 	public void addBook(Book book) {
 		if(!this.books.contains(book)) {
 			this.books.add(book);

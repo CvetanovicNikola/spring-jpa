@@ -13,6 +13,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 @Entity(name = "Book")
 @Table(name = "book")
 public class Book {
@@ -46,6 +49,7 @@ public class Book {
 	private String bookName;
 	
 	@ManyToOne
+	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(
 			name = "student_id",
 			nullable = false,

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.github.javafaker.Faker;
 
 @SpringBootApplication
@@ -44,6 +44,20 @@ public class SpringJpaApplication {
 			
 			student.setStudentIdCard(card);
 			
+			student.addEnrolment(
+					new Enrolment(new EnrolmentID(1, 1), 
+							student, 
+							new Course("Peras course", "computer science"),
+							LocalDate.now()));
+			student.addEnrolment(new Enrolment(
+						new EnrolmentID(1, 2),
+						student,
+						new Course("Mikas course", "computer science"),
+						LocalDate.now()));
+			
+//			student.addCourse(new Course("Peras course", "computer science"));
+//			student.addCourse(new Course("Mikas course", "computer science"));
+			
 			studentRepository.save(student);
 			
 			//studentCardRepository.save(card);
@@ -53,6 +67,8 @@ public class SpringJpaApplication {
 				books.forEach(b -> System.out.println(s.getFirstName() + b.getBookName()));
 			});
 			
+//			studentRepository.findAll().forEach(student -> student.getCourses()
+//					.forEach(c -> System.out.println(c)));
 			//studentCardRepository.findById(1L).ifPresent(System.out::println);
 			
 			//studentRepository.deleteById(173L);
